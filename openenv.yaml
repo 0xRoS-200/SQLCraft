@@ -1,0 +1,94 @@
+name: text-to-sql-analyst
+version: 1.0.0
+description: >
+  AI agent answers business intelligence questions by generating correct SQL
+  against real database schemas. Agent receives a schema + natural language
+  question and is graded by executing its SQL and comparing results to ground truth.
+author: OpenEnv Hackathon Team
+tags: [sql, data-analysis, nlp, business-intelligence, pytorch]
+
+api:
+  base_url: http://localhost:8000
+  endpoints:
+    reset: POST /reset
+    step: POST /step
+    state: GET /state
+
+tasks:
+  - id: single_table_aggregation
+    name: Single Table Revenue Query
+    difficulty: easy
+    description: >
+      Query total revenue from a single orders table with date and status filters.
+      Tests basic aggregation and WHERE clause construction.
+    max_steps: 3
+    pass_threshold: 0.6
+
+  - id: multi_table_join
+    name: Top Customers Multi-Table Join
+    difficulty: medium
+    description: >
+      Find top 5 customers by total spend across customers and orders tables.
+      Requires JOIN, GROUP BY, ORDER BY, date filtering, and LIMIT.
+    max_steps: 3
+    pass_threshold: 0.5
+
+  - id: complex_analytics
+    name: Category Return Rate Analysis
+    difficulty: hard
+    description: >
+      Compute product category return rates across 5 tables using CTEs,
+      LEFT JOINs, derived metrics, and Q4 date arithmetic.
+    max_steps: 3
+    pass_threshold: 0.4
+
+environment:
+  variables:
+    - API_BASE_URL
+    - MODEL_NAME
+    - HF_TOKEN
+
+observation_space:
+  type: dict
+  fields:
+    schema:
+      type: dict
+      description: Table names, column names, types, primary keys, foreign key relationships
+    question:
+      type: str
+      description: Natural language business question to answer via SQL
+    sample_rows:
+      type: dict
+      description: Up to 3 example rows per table showing real data format
+    last_sql:
+      type: str
+      nullable: true
+      description: SQL from previous attempt (null on first attempt)
+    last_result:
+      type: list
+      nullable: true
+      description: Result rows from previous SQL execution
+
+action_space:
+  type: str
+  description: A single valid SQLite SQL query string
+
+reward:
+  type: float
+  range: [0.0, 1.0]
+  tiers:
+    - score: 0.0
+      label: syntax_error
+      description: SQL fails to execute
+    - score: 0.1
+      label: valid_sql
+      description: Valid SQL but wrong tables or empty result
+    - score: 0.3
+      label: wrong_aggregation
+      description: Correct tables but wrong grouping, filtering, or aggregation
+    - score: 0.6
+      label: partial_match
+      description: 70%+ row overlap with ground truth result
+    - score: 1.0
+      label: correct
+      description: Exact match (order-insensitive, type-flexible)

@@ -1,0 +1,36 @@
+{
+  "question": "List the top 5 customers by total spend in the last 6 months, along with their city and number of orders.",
+  "sql": "SELECT c.customer_name, c.city,\n       COUNT(o.order_id) AS order_count,\n       ROUND(SUM(o.total_amount), 2) AS total_spend\nFROM customers c\nJOIN orders o ON c.customer_id = o.customer_id\nWHERE o.order_date >= '2025-10-01'\n  AND o.status = 'completed'\nGROUP BY c.customer_id, c.customer_name, c.city\nORDER BY total_spend DESC\nLIMIT 5",
+  "expected_result": [
+    [
+      "Customer 17",
+      "Mumbai",
+      3,
+      149213.39
+    ],
+    [
+      "Customer 16",
+      "Hyderabad",
+      3,
+      108138.58
+    ],
+    [
+      "Customer 21",
+      "Pune",
+      2,
+      104338.75
+    ],
+    [
+      "Customer 25",
+      "Pune",
+      2,
+      88157.74
+    ],
+    [
+      "Customer 34",
+      "Mumbai",
+      1,
+      75896.94
+    ]
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "question": "Which product categories had a return rate above 20% in Q4 2023, and what was their average order value?",
+  "sql": "WITH category_stats AS (\n    SELECT cat.category_name,\n           COUNT(DISTINCT oi.item_id) AS total_items_sold,\n           COUNT(DISTINCT r.return_id) AS total_returns,\n           AVG(o.total_amount) AS avg_order_value\n    FROM categories cat\n    JOIN products p ON p.category_id = cat.category_id\n    JOIN order_items oi ON oi.product_id = p.product_id\n    JOIN orders o ON o.order_id = oi.order_id\n    LEFT JOIN returns r ON r.order_id = o.order_id AND r.product_id = p.product_id\n    WHERE o.order_date BETWEEN '2023-10-01' AND '2023-12-31'\n      AND o.status = 'completed'\n    GROUP BY cat.category_id, cat.category_name\n)\nSELECT category_name,\n       ROUND(100.0 * total_returns / total_items_sold, 2) AS return_rate_pct,\n       ROUND(avg_order_value, 2) AS avg_order_value\nFROM category_stats\nWHERE total_items_sold > 0\n  AND CAST(total_returns AS FLOAT) / total_items_sold > 0.20\nORDER BY return_rate_pct DESC",
+  "expected_result": [
+    [
+      "Clothing",
+      38.89,
+      19004.5
+    ],
+    [
+      "Electronics",
+      26.92,
+      16069.5
+    ]
+  ]
+}

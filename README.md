@@ -1,3 +1,13 @@
+---
+title: Text-to-SQL Analyst
+emoji: 🗄️
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 8000
+pinned: false
+---
+
 # Text-to-SQL Analyst — OpenEnv Environment
 
 > **OpenEnv Hackathon Round 1** | Meta × Hugging Face | April 2026

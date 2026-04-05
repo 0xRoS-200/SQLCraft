@@ -102,7 +102,7 @@ def _get_sample_rows(tables: list[str], n: int = 3) -> dict:
 # ── Request / Response Models ──────────────────────────────────────────────────
 
 class ResetRequest(BaseModel):
-    task_id: str
+    task_id: str | None = None
 
 
 class StepRequest(BaseModel):
@@ -117,8 +117,11 @@ def health():
 
 
 @app.post("/reset")
-def reset(req: ResetRequest):
-    task_id = req.task_id
+def reset(req: ResetRequest | None = None):
+    task_id = req.task_id if req else None
+    if not task_id:
+        # Default to first task if none provided
+        task_id = list(TASK_CONFIG.keys())[0]
     if task_id not in TASK_CONFIG:
         raise HTTPException(status_code=400, detail=f"Unknown task_id: {task_id}. "
                             f"Valid: {list(TASK_CONFIG.keys())}")

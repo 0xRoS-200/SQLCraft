@@ -7,17 +7,22 @@ name = "text-to-sql-analyst"
 version = "1.0.0"
 description = "AI agent answers business intelligence questions by generating correct SQL against real database schemas."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
-    "fastapi==0.111.0",
-    "uvicorn==0.30.0",
-    "pydantic==2.7.0",
-    "requests==2.31.0",
+    "fastapi>=0.111.0",
+    "uvicorn>=0.30.0",
+    "pydantic>=2.7.0",
+    "requests>=2.31.0",
     "torch>=2.2.0",
     "transformers>=4.40.0",
     "accelerate>=0.29.0",
     "opencv-python-headless>=4.9.0",
+    "openenv-core>=0.2.0",
 ]
+
+[project.scripts]
+server = "main:run_server"
+inference = "inference:run"
 
 [tool.setuptools]
 py-modules = ["main", "inference", "app"]

@@ -197,3 +197,9 @@ def state():
         "attempt_number": _state["attempt_number"],
         "max_attempts": _state["max_attempts"],
     }
+
+
+def run_server():
+    """Helper to run the FastAPI app via uvicorn (used by pyproject.toml)."""
+    import uvicorn
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=False)

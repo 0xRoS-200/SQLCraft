@@ -21,8 +21,9 @@ dependencies = [
 ]
 
 [project.scripts]
-server = "main:run_server"
+server = "server.app:main"
 inference = "inference:run"
 
 [tool.setuptools]
-py-modules = ["main", "inference", "app"]
+py-modules = ["main", "inference"]
+packages = ["server"]

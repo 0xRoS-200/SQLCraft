@@ -9,6 +9,7 @@ Required env vars:
     API_BASE_URL  — Base URL of the OpenEnv environment (e.g. http://localhost:8000)
     MODEL_NAME    — HuggingFace model ID (e.g. tiiuae/falcon-rw-1b) or hosted model name
     HF_TOKEN      — HuggingFace token for gated models / API auth
+    LOCAL_IMAGE_NAME — (Optional) Docker image when using from_docker_image()
 """
 
 import json
@@ -21,9 +22,12 @@ import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 
 # ── Config ────────────────────────────────────────────────────────────────────
-API_BASE_URL = os.environ.get("API_BASE_URL", "http://localhost:8000")
-MODEL_NAME = os.environ.get("MODEL_NAME", "tiiuae/falcon-rw-1b")
-HF_TOKEN = os.environ.get("HF_TOKEN", "")
+API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")
+MODEL_NAME = os.getenv("MODEL_NAME", "tiiuae/falcon-rw-1b")
+HF_TOKEN = os.getenv("HF_TOKEN")
+
+# Optional – if you use from_docker_image():
+LOCAL_IMAGE_NAME = os.getenv("LOCAL_IMAGE_NAME")
 
 TASKS = ["single_table_aggregation", "multi_table_join", "complex_analytics"]
 
